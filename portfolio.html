@@ -30,19 +30,36 @@
 </head>
 <body x-data="portfolioData()" x-init="initPlayer()" class="min-h-screen flex flex-col">
 
-    <!-- 1. 顶部导航 (保持一致) -->
+    <!-- 导航栏 (注意：全部作品 链接高亮) -->
     <nav class="fixed w-full z-50 glass-panel border-b-0">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <a href="index.html" class="font-serif italic text-2xl tracking-wider text-white">GaXin</a>
+                
+                <!-- 桌面端导航 -->
                 <div class="hidden md:flex space-x-8">
                     <a href="index.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">首页</a>
-                    <!-- 当前页面高亮 -->
                     <a href="portfolio.html" class="text-art-accent font-bold px-3 py-2 text-sm">全部作品</a>
                     <a href="about.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">关于我</a>
                     <a href="contact.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">联系</a>
                     <a href="certificates.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">获奖证书</a>
                 </div>
+                
+                <!-- 移动端汉堡菜单按钮 -->
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-white hover:text-art-accent transition p-2">
+                    <i class="fas text-xl" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div x-show="mobileMenuOpen" class="md:hidden glass-panel border-t border-gray-800">
+            <div class="px-6 py-4 space-y-4">
+                <a href="index.html" class="block text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">首页</a>
+                <a href="portfolio.html" class="block text-art-accent font-bold px-3 py-2 text-sm">全部作品</a>
+                <a href="about.html" class="block text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">关于我</a>
+                <a href="contact.html" class="block text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">联系</a>
+                <a href="certificates.html" class="block text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">获奖证书</a>
             </div>
         </div>
     </nav>
@@ -174,6 +191,7 @@
                 filter: 'all',
                 modalOpen: false,
                 currentItem: null,
+                mobileMenuOpen: false,
                 isPlaying: false,
                 volume: 0.3,
                 currentTrackIndex: 0,
