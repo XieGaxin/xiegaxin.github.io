@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GaXin | 作品档案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #050505; color: #f3f4f6; overflow-x: hidden; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass-panel { background: rgba(30, 30, 30, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .work-card:hover img { transform: scale(1.03); }
+        
+        /* 音乐播放器动画 */
+        .spin-slow { animation: spin 8s linear infinite; }
+        .paused { animation-play-state: paused; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: { colors: { 'art-accent': '#d4af37', 'art-dark': '#0a0a0a' } }
+            }
+        }
+    </script>
+</head>
+<body x-data="portfolioData()" x-init="initPlayer()" class="min-h-screen flex flex-col">
+
+    <!-- 1. 顶部导航 (保持一致) -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="index.html" class="font-serif italic text-2xl tracking-wider text-white">GaXin</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">首页</a>
+                    <!-- 当前页面高亮 -->
+                    <a href="portfolio.html" class="text-art-accent font-bold px-3 py-2 text-sm">全部作品</a>
+                    <a href="about.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">关于我</a>
+                    <a href="contact.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">联系</a>
+                    <a href="certificates.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">获奖证书</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. 页面标题 -->
+    <div class="mt-32 mb-10 max-w-7xl mx-auto px-6 text-center">
+        <h1 class="text-4xl md:text-5xl font-serif mb-4">作品档案库</h1>
+        <p class="text-gray-400">Archive / 2022 - 2025</p>
+        
+        <!-- 分类筛选器 -->
+        <div class="flex flex-wrap justify-center gap-2 mt-8">
+            <template x-for="cat in categories">
+                <button @click="filter = cat.id" 
+                    :class="filter === cat.id ? 'bg-white text-black' : 'glass-panel text-gray-400 hover:text-white'"
+                    class="px-5 py-2 rounded-full text-sm transition" x-text="cat.name"></button>
+            </template>
+        </div>
+    </div>
+
+    <!-- 3. 作品网格 (更密集) -->
+    <main class="max-w-7xl mx-auto px-6 mb-20">
+        <!-- 纵向网格作品列表 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="item in paginatedItems" :key="item.id">
+                <div class="work-card group relative aspect-[4/3] rounded-lg overflow-hidden glass-panel cursor-pointer" @click="openModal(item)">
+                    <img :src="item.image" class="w-full h-full object-cover transition duration-500 group-hover:scale-103">
+                    <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center p-4 text-center">
+                        <span class="text-art-accent text-xs uppercase tracking-widest mb-2" x-text="item.category"></span>
+                        <h3 class="text-xl font-bold text-white" x-text="item.title"></h3>
+                    </div>
+                    <!-- 视频图标标记 -->
+                    <template x-if="item.type === 'video'">
+                        <div class="absolute top-3 right-3 bg-black/60 px-2 py-1 rounded text-xs text-white"><i class="fas fa-video"></i></div>
+                    </template>
+                </div>
+            </template>
+        </div>
+
+        <!-- 动态分页器 -->
+        <div class="flex justify-center mt-16 gap-2">
+            <button @click="prevPage()" class="w-10 h-10 flex items-center justify-center rounded-full glass-panel hover:bg-white/10" :class="currentPage === 1 ? 'text-gray-500 cursor-not-allowed hover:bg-transparent' : 'text-white'">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <!-- 动态生成页码按钮 -->
+            <template x-for="page in totalPages" :key="page">
+                <button @click="goToPage(page)" class="w-10 h-10 flex items-center justify-center rounded-full transition" :class="currentPage === page ? 'bg-art-accent text-black font-bold' : 'glass-panel text-white hover:bg-white/10'" x-text="page"></button>
+            </template>
+            
+            <button @click="nextPage()" class="w-10 h-10 flex items-center justify-center rounded-full glass-panel hover:bg-white/10" :class="currentPage === totalPages ? 'text-gray-500 cursor-not-allowed hover:bg-transparent' : 'text-white'">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- 4. 详情弹窗 (Modal) -->
+    <div x-show="modalOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4" style="display:none">
+        <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" @click="modalOpen = false"></div>
+        <div class="relative bg-[#111] border border-white/10 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl">
+            <!-- 关闭按钮 -->
+            <button @click="modalOpen = false" class="absolute top-4 right-4 z-50 bg-black/50 w-8 h-8 rounded-full text-white flex items-center justify-center hover:bg-red-500 transition"><i class="fas fa-times"></i></button>
+            
+            <!-- 上下切换按钮 -->
+            <button @click="prevWork()" class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black/50 w-10 h-10 rounded-full text-white flex items-center justify-center hover:bg-art-accent transition z-40"><i class="fas fa-chevron-left"></i></button>
+            <button @click="nextWork()" class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black/50 w-10 h-10 rounded-full text-white flex items-center justify-center hover:bg-art-accent transition z-40"><i class="fas fa-chevron-right"></i></button>
+            
+            <template x-if="currentItem">
+                <div>
+                    <!-- 媒体区域 -->
+                    <div class="w-full aspect-video bg-black flex items-center justify-center p-4">
+                         <template x-if="currentItem.type === 'video' && currentItem.bilibili">
+                            <iframe :src="currentItem.bilibili" class="w-full h-full" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+                         </template>
+                         <template x-if="currentItem.type !== 'video' || !currentItem.bilibili">
+                            <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto">
+                         </template>
+                    </div>
+                    <div class="p-8">
+                        <h2 class="text-3xl font-bold mb-2" x-text="currentItem.title"></h2>
+                        <div class="text-art-accent text-sm font-bold mb-6" x-text="currentItem.category"></div>
+                        <p class="text-gray-300 leading-relaxed" x-text="currentItem.desc"></p>
+                        
+                        <template x-if="currentItem.link">
+                             <a :href="currentItem.link" target="_blank" class="inline-block mt-6 px-6 py-2 bg-[#fb7299] text-white rounded hover:bg-[#ff85a6] transition">
+                                <i class="fab fa-bilibili mr-2"></i> 在 Bilibili 观看
+                             </a>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- 音乐播放器 (复制) -->
+    <div class="fixed bottom-6 left-6 z-[100]">
+        <div class="glass-panel p-3 rounded-full flex items-center gap-3 pr-6 shadow-2xl">
+            <!-- 上一曲按钮 -->
+            <button @click="prevTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-backward text-xs"></i>
+            </button>
+            
+            <!-- 播放/暂停按钮 -->
+            <div @click="togglePlay()" class="relative w-10 h-10 cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&q=80" 
+                     class="w-full h-full rounded-full object-cover border border-white/20 spin-slow" 
+                     :class="isPlaying ? '' : 'paused'">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas text-[10px] text-white" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+                </div>
+            </div>
+            
+            <!-- 下一曲按钮 -->
+            <button @click="nextTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-forward text-xs"></i>
+            </button>
+            
+            <!-- 歌曲信息和音量控制 -->
+            <div class="flex flex-col">
+                <span class="text-xs font-bold text-white w-24 truncate" x-text="currentTrack?.title || 'Lofi Study Beat'"></span>
+                <input type="range" min="0" max="1" step="0.05" x-model="volume" @input="updateVolume" class="w-16 h-1 mt-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+        </div>
+        <audio x-ref="audio" loop></audio>
+    </div>
+
+    <script>
+        function portfolioData() {
+            return {
+                filter: 'all',
+                modalOpen: false,
+                currentItem: null,
+                isPlaying: false,
+                volume: 0.3,
+                currentTrackIndex: 0,
+                
+                // 分页功能
+                currentPage: 1,
+                itemsPerPage: 6,
+                
+                // 音乐列表，使用本地Music文件夹中的歌曲
+                tracks: [
+                    { title: 'believer', src: './Music/believer.mp3' },
+                    { title: 'faded', src: './Music/faded.mp3' },
+                    { title: 'Lofi Study Beat', src: './Music/Lofi Study Beat.mp3' },
+                    { title: 'sky(radio edit)', src: './Music/sky(radio edit).mp3' },
+                    { title: 'Way Back', src: './Music/Way Back - Cozi Zuehlsdorff.mp3' }
+                ],
+                
+                get currentTrack() {
+                    return this.tracks[this.currentTrackIndex];
+                },
+                
+                categories: [
+                    {id: 'all', name: '全部'},
+                    {id: '3d', name: '3D 视觉'},
+                    {id: 'video', name: '影视/AI'},
+                    {id: 'photo', name: '摄影'}
+                ],
+                items: [
+                    // 作品 1：兰博基尼
+                    {
+                        id: 1, title: '兰博基尼飓风 AI 广告', category: 'video', type: 'video',
+                        image: './image/car.jpg',
+                        desc: '使用生成式 AI 工作流探索商业广告的边界。'
+                    },
+                    // 作品 2：专栏
+                    {
+                        id: 2, title: 'Unreal Engine5', category: 'photo', type: 'link',
+                        image: 'https://album.biliimg.com/bfs/new_dyn/f2adb928d11e989627ed19265a97971b388476908.png@1052w_!web-dynamic.avif',
+                        desc: '关于虚幻5的作品和技术能力。',
+                        link: 'https://b23.tv/xU8c1Kr'
+                    },
+                    // 更多作品填充以展示网格效果
+                    { id: 3, title: '狂鼠', category: '3d', image: './image/狂鼠.png', desc: 'Blender 硬表面' },
+                    { id: 4, title: '科宝IP', category: '3d', image: './image/科宝渲染1.png', desc: '硬表面建模练习' },
+                    { id: 5, title: 'IP', category: 'photo', image: './image/boy_Rander.png', desc: '人物IP' },
+                    { id: 18, title: '作品 18', category: 'video', image: './image/22.png', desc: '作品描述' },
+                    { id: 6, title: '潮流鞋', category: '3d', image: './image/23.png', desc: '作品描述' },
+                    // 占位作品位置，可用于添加更多图片作品
+                    { id: 7, title: '作品 7', category: '3d', image: './image/01.jpg', desc: '作品描述' },
+                    { id: 8, title: '作品 8', category: 'photo', image: './image/03.jpg', desc: '作品描述' },
+                    { id: 9, title: '作品 9', category: 'video', image: './image/07.png', desc: '作品描述' },
+                    { id: 10, title: '作品 10', category: '3d', image: './image/05.jpg', desc: '作品描述' },
+                    { id: 25, title: '作品 25', category: '3d', image: './image/02.jpg', desc: '作品描述' },
+                    { id: 11, title: '作品 11', category: 'photo', image: './image/06.png', desc: '作品描述' },
+                    { id: 12, title: '作品 12', category: 'video', image: './image/07.png', desc: '作品描述' },
+                    { id: 13, title: '作品 13', category: '3d', image: './image/机甲.png', desc: '作品描述' },
+                    { id: 14, title: '作品 14', category: 'photo', image: './image/机甲2.png', desc: '作品描述' },
+                    { id: 15, title: '作品 15', category: 'video', image: './image/08.png', desc: '作品描述' },
+                    // 更多预留作品位置
+                    { id: 16, title: '作品 16', category: '3d', image: './image/机甲侧视图.png', desc: '作品描述' },
+                    { id: 17, title: '作品 17', category: 'photo', image: './image/机甲背视图.png', desc: '作品描述' },
+                    { id: 19, title: '作品 19', category: '3d', image: './image/23.png', desc: '作品描述' },
+                    { id: 20, title: '作品 20', category: 'photo', image: './image/06.png', desc: '作品描述' },
+                    { id: 21, title: '作品 21', category: 'video', image: './image/07.png', desc: '作品描述' },
+                    { id: 22, title: '作品 22', category: '3d', image: './image/red2.png', desc: '作品描述' },
+                    { id: 23, title: '作品 23', category: 'photo', image: './image/科宝渲染1侧视图.png', desc: '作品描述' },
+                    { id: 24, title: '作品 24', category: 'video', image: './image/科宝渲染1后视.png', desc: '作品描述' },
+                ],
+                
+                get filteredItems() {
+                    if(this.filter === 'all') return this.items;
+                    return this.items.filter(i => i.category === this.filter);
+                },
+                
+                get paginatedItems() {
+                    const start = (this.currentPage - 1) * this.itemsPerPage;
+                    const end = start + this.itemsPerPage;
+                    return this.filteredItems.slice(start, end);
+                },
+                
+                get totalPages() {
+                    return Math.ceil(this.filteredItems.length / this.itemsPerPage);
+                },
+                
+                goToPage(page) {
+                    if(page >= 1 && page <= this.totalPages) {
+                        this.currentPage = page;
+                    }
+                },
+                
+                prevPage() {
+                    if(this.currentPage > 1) {
+                        this.currentPage--;
+                    }
+                },
+                
+                nextPage() {
+                    if(this.currentPage < this.totalPages) {
+                        this.currentPage++;
+                    }
+                },
+                openModal(item) { this.currentItem = item; this.modalOpen = true; },
+                
+                prevWork() {
+                    const currentIndex = this.items.findIndex(i => i.id === this.currentItem.id);
+                    if(currentIndex > 0) {
+                        this.currentItem = this.items[currentIndex - 1];
+                    }
+                },
+                
+                nextWork() {
+                    const currentIndex = this.items.findIndex(i => i.id === this.currentItem.id);
+                    if(currentIndex < this.items.length - 1) {
+                        this.currentItem = this.items[currentIndex + 1];
+                    }
+                },
+                
+                // 播放器逻辑（与首页相同，保持同步）
+                initPlayer() {
+                    const audio = this.$refs.audio;
+                    // 1. 设置初始曲目
+                    audio.src = this.currentTrack.src;
+                    
+                    const savedVol = localStorage.getItem('site_volume');
+                    if(savedVol) this.volume = parseFloat(savedVol);
+                    audio.volume = this.volume;
+                    const savedTime = localStorage.getItem('audio_time');
+                    const wasPlaying = localStorage.getItem('audio_playing') === 'true';
+                    if(savedTime) audio.currentTime = parseFloat(savedTime);
+                    
+                    setInterval(() => {
+                        localStorage.setItem('audio_time', audio.currentTime);
+                        localStorage.setItem('audio_playing', this.isPlaying);
+                        localStorage.setItem('currentTrackIndex', this.currentTrackIndex);
+                    }, 1000);
+
+                    if(wasPlaying) {
+                        const playPromise = audio.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(_ => { this.isPlaying = true; }).catch(e => { this.isPlaying = false; });
+                        }
+                    }
+                    
+                    // 处理URL参数，打开指定作品
+                    this.handleUrlParams();
+                },
+                
+                // 处理URL参数
+                handleUrlParams() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const openId = urlParams.get('open');
+                    if (openId) {
+                        const item = this.items.find(i => i.id == openId);
+                        if (item) {
+                            setTimeout(() => {
+                                this.openModal(item);
+                            }, 500); // 延迟打开，确保页面完全加载
+                        }
+                    }
+                },
+                togglePlay() {
+                    const audio = this.$refs.audio;
+                    if(this.isPlaying) audio.pause(); else audio.play();
+                    this.isPlaying = !this.isPlaying;
+                    localStorage.setItem('audio_playing', this.isPlaying);
+                },
+                updateVolume() {
+                    this.$refs.audio.volume = this.volume;
+                    localStorage.setItem('site_volume', this.volume);
+                },
+                prevTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+                    this.loadTrack();
+                },
+                nextTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+                    this.loadTrack();
+                },
+                loadTrack() {
+                    const audio = this.$refs.audio;
+                    audio.src = this.currentTrack.src;
+                    audio.currentTime = 0;
+                    if(this.isPlaying) {
+                        audio.play();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

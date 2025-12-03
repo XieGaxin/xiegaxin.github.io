@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GaXin | 获奖证书</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #050505; color: #f3f4f6; overflow-x: hidden; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass-panel { background: rgba(30, 30, 30, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .spin-slow { animation: spin 8s linear infinite; }
+        .paused { animation-play-state: paused; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .certificate-card:hover img { transform: scale(1.03); }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: { colors: { 'art-accent': '#d4af37', 'art-dark': '#0a0a0a' } }
+            }
+        }
+    </script>
+</head>
+<body x-data="certificatesData()" x-init="initPlayer()" class="min-h-screen flex flex-col">
+
+    <!-- 导航栏 -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="index.html" class="font-serif italic text-2xl tracking-wider text-white">GaXin</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">首页</a>
+                    <a href="portfolio.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">全部作品</a>
+                    <a href="about.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">关于我</a>
+                    <a href="contact.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">联系</a>
+                    <a href="certificates.html" class="text-art-accent font-bold px-3 py-2 text-sm">获奖证书</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-32 pb-20 max-w-7xl mx-auto px-6">
+        <!-- 页面标题 -->
+        <div class="mb-16 text-center">
+            <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">获奖证书</h1>
+            <p class="text-gray-400">Achievements / 2022 - 2025</p>
+        </div>
+
+        <!-- 证书数据 -->
+        <template x-for="cert in certificates" :key="cert.id">
+            <div x-show="false" :data-id="cert.id" :data-image="cert.image" :data-title="cert.title"></div>
+        </template>
+        
+        <!-- 证书展示区域 -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <template x-for="cert in certificates" :key="cert.id">
+                <div class="certificate-card group relative aspect-[4/3] rounded-xl overflow-hidden glass-panel p-4 cursor-pointer transition-all duration-300 hover:shadow-lg" @click="openModal(cert)">
+                    <img :src="cert.image" :alt="cert.title" class="w-full h-full object-cover rounded-lg transition duration-500 group-hover:scale-103">
+                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur-sm">
+                        <h3 class="text-sm font-bold text-white text-center" x-text="cert.title"></h3>
+                    </div>
+                </div>
+            </template>
+        </div>
+        
+        <!-- 证书查看模态框 -->
+        <div x-show="modalOpen" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm" @click="closeModal">
+            <div class="relative max-w-7xl max-h-[90vh] w-full" @click.stop>
+                <!-- 关闭按钮 -->
+                <button @click="closeModal" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center transition z-50">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <!-- 左右切换按钮 -->
+                <button @click="prevCert" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-12 h-12 rounded-full flex items-center justify-center transition z-50">
+                    <i class="fas fa-chevron-left text-xl"></i>
+                </button>
+                <button @click="nextCert" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-12 h-12 rounded-full flex items-center justify-center transition z-50">
+                    <i class="fas fa-chevron-right text-xl"></i>
+                </button>
+                
+                <!-- 证书标题 -->
+                <div class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black/60 px-6 py-2 rounded-full text-white text-sm">
+                    <span x-text="currentCert.title"></span>
+                </div>
+                
+                <!-- 缩放控制按钮 -->
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-black/60 rounded-full p-2">
+                    <button @click="zoomOut" class="w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button @click="resetZoom" class="w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition">
+                        <i class="fas fa-arrows-alt"></i>
+                    </button>
+                    <button @click="zoomIn" class="w-10 h-10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                </div>
+                
+                <!-- 证书图片 -->
+                <div class="flex items-center justify-center h-full overflow-hidden" @wheel.prevent="handleZoom">
+                    <img :src="currentCert.image" :alt="currentCert.title" 
+                         class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl transition-transform duration-300"
+                         :style="{ transform: `scale(${zoomLevel})` }">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部播放器 -->
+    <div class="fixed bottom-6 left-6 z-[100]">
+        <div class="glass-panel p-3 rounded-full flex items-center gap-3 pr-6 shadow-2xl">
+            <!-- 上一曲按钮 -->
+            <button @click="prevTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-backward text-xs"></i>
+            </button>
+            
+            <!-- 播放/暂停按钮 -->
+            <div @click="togglePlay()" class="relative w-10 h-10 cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&q=80" class="w-full h-full rounded-full object-cover border border-white/20 spin-slow" :class="isPlaying ? '' : 'paused'">
+                <div class="absolute inset-0 flex items-center justify-center"><i class="fas text-[10px] text-white" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i></div>
+            </div>
+            
+            <!-- 下一曲按钮 -->
+            <button @click="nextTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-forward text-xs"></i>
+            </button>
+            
+            <!-- 歌曲信息和音量控制 -->
+            <div class="flex flex-col">
+                <span class="text-xs font-bold text-white w-24 truncate" x-text="currentTrack?.title || 'Lofi Study Beat'"></span>
+                <input type="range" min="0" max="1" step="0.05" x-model="volume" @input="updateVolume" class="w-16 h-1 mt-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+        </div>
+        <audio x-ref="audio" loop></audio>
+    </div>
+
+    <!-- 底部 -->
+    <footer class="py-8 text-center text-gray-600 text-xs">
+        <p>&copy; 2024 GaXin Studio. Based in Earth.</p>
+    </footer>
+
+    <script>
+        function certificatesData() {
+            return {
+                // 模态框状态
+                modalOpen: false,
+                currentCertIndex: 0,
+                zoomLevel: 1.0, // 缩放级别，默认1.0（原尺寸）
+                minZoom: 0.5,   // 最小缩放比例
+                maxZoom: 3.0,   // 最大缩放比例
+                
+                // 证书数据
+                certificates: [
+                    { id: 1, title: '2024学院奖', image: './image/2024学院奖/S-n22820243687544.png' },
+                    { id: 2, title: '2025学院奖', image: './image/2025学院奖/01.png' },
+                    { id: 3, title: '2025学院奖', image: './image/2025学院奖/T-a25020243896926.png' },
+                    { id: 4, title: '第十四届三创赛', image: './image/第十四届三创赛/GS2024141233280700622358.jpeg' },
+                    { id: 5, title: '蓝桥杯', image: './image/蓝桥杯/谢伽鑫_1547330.jpg' },
+                    { id: 6, title: '米兰设计周', image: './image/米兰设计周/202400FM36010S020ML212464_212464.png' },
+                    { id: 7, title: '全国海洋设计大赛', image: './image/全国海洋设计大赛/提取自媒体动漫佳作奖4.jpg' },
+                    { id: 8, title: '全国海洋设计大赛', image: './image/全国海洋设计大赛/提取自平面设计组3001-4486佳作奖.jpg' },
+                    { id: 9, title: '中国大学生计算机设计大赛', image: './image/中国大学生计算机设计大赛/草药公园.jpg' }
+                ],
+                
+                get currentCert() {
+                    return this.certificates[this.currentCertIndex];
+                },
+                
+                // 模态框方法
+                openModal(cert) {
+                    this.currentCertIndex = this.certificates.findIndex(c => c.id === cert.id);
+                    this.modalOpen = true;
+                    document.body.style.overflow = 'hidden';
+                },
+                
+                closeModal() {
+                    this.modalOpen = false;
+                    document.body.style.overflow = '';
+                },
+                
+                prevCert() {
+                    this.currentCertIndex = (this.currentCertIndex - 1 + this.certificates.length) % this.certificates.length;
+                    this.zoomLevel = 1.0; // 切换证书时重置缩放
+                },
+                
+                nextCert() {
+                    this.currentCertIndex = (this.currentCertIndex + 1) % this.certificates.length;
+                    this.zoomLevel = 1.0; // 切换证书时重置缩放
+                },
+                
+                // 缩放功能
+                zoomIn() {
+                    if (this.zoomLevel < this.maxZoom) {
+                        this.zoomLevel = parseFloat((this.zoomLevel + 0.2).toFixed(1));
+                    }
+                },
+                
+                zoomOut() {
+                    if (this.zoomLevel > this.minZoom) {
+                        this.zoomLevel = parseFloat((this.zoomLevel - 0.2).toFixed(1));
+                    }
+                },
+                
+                resetZoom() {
+                    this.zoomLevel = 1.0;
+                },
+                
+                handleZoom(event) {
+                    // 鼠标滚轮事件处理，deltaY 为负时放大，为正时缩小
+                    if (event.deltaY < 0) {
+                        this.zoomIn();
+                    } else {
+                        this.zoomOut();
+                    }
+                },
+                
+                // 音乐播放器功能
+                isPlaying: false,
+                volume: 0.3,
+                currentTrackIndex: 0,
+                
+                // 音乐列表，使用本地Music文件夹中的歌曲
+                tracks: [
+                    { title: 'believer', src: './Music/believer.mp3' },
+                    { title: 'faded', src: './Music/faded.mp3' },
+                    { title: 'Lofi Study Beat', src: './Music/Lofi Study Beat.mp3' },
+                    { title: 'sky(radio edit)', src: './Music/sky(radio edit).mp3' },
+                    { title: 'Way Back', src: './Music/Way Back - Cozi Zuehlsdorff.mp3' }
+                ],
+                
+                get currentTrack() {
+                    return this.tracks[this.currentTrackIndex];
+                },
+                
+                initPlayer() {
+                    const audio = this.$refs.audio;
+                    // 1. 设置初始曲目
+                    audio.src = this.currentTrack.src;
+                    
+                    const savedVol = localStorage.getItem('site_volume');
+                    if(savedVol) this.volume = parseFloat(savedVol);
+                    audio.volume = this.volume;
+                    const savedTime = localStorage.getItem('audio_time');
+                    const wasPlaying = localStorage.getItem('audio_playing') === 'true';
+                    if(savedTime) audio.currentTime = parseFloat(savedTime);
+                    setInterval(() => {
+                        localStorage.setItem('audio_time', audio.currentTime);
+                        localStorage.setItem('audio_playing', this.isPlaying);
+                        localStorage.setItem('currentTrackIndex', this.currentTrackIndex);
+                    }, 1000);
+                    if(wasPlaying) {
+                        const playPromise = audio.play();
+                        if (playPromise !== undefined) { playPromise.then(_ => { this.isPlaying = true; }).catch(e => { this.isPlaying = false; }); }
+                    }
+                },
+                togglePlay() {
+                    const audio = this.$refs.audio;
+                    if(this.isPlaying) audio.pause(); else audio.play();
+                    this.isPlaying = !this.isPlaying;
+                    localStorage.setItem('audio_playing', this.isPlaying);
+                },
+                updateVolume() {
+                    this.$refs.audio.volume = this.volume;
+                    localStorage.setItem('site_volume', this.volume);
+                },
+                prevTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+                    this.loadTrack();
+                },
+                nextTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+                    this.loadTrack();
+                },
+                loadTrack() {
+                    const audio = this.$refs.audio;
+                    audio.src = this.currentTrack.src;
+                    audio.currentTime = 0;
+                    if(this.isPlaying) {
+                        audio.play();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

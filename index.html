@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GaXin | 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 共享样式 -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #050505; color: #f3f4f6; overflow-x: hidden; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass-panel { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .text-gradient { background: linear-gradient(to right, #fff, #999); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* 音乐播放器动画 */
+        .spin-slow { animation: spin 8s linear infinite; }
+        .paused { animation-play-state: paused; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'art-accent': '#d4af37', 'art-dark': '#0a0a0a' }
+                }
+            }
+        }
+    </script>
+</head>
+<body x-data="globalData()" x-init="initPlayer()" class="relative min-h-screen flex flex-col">
+
+    <!-- 1. 顶部导航 (多页通用) -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="index.html" class="font-serif italic text-2xl tracking-wider text-white">GaXin</a>
+                <div class="hidden md:flex space-x-8">
+                    <!-- 当前页面高亮 -->
+                    <a href="index.html" class="text-art-accent font-bold px-3 py-2 text-sm">首页</a>
+                    <a href="portfolio.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">全部作品</a>
+                    <a href="about.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">关于我</a>
+                    <a href="contact.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">联系</a>
+                    <a href="certificates.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">获奖证书</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. Hero 区域 (全屏视频背景) -->
+    <header class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <!-- 替换为你的 Showreel 封面或视频 -->
+            <img src="./image/red2.png" class="w-full h-full object-cover opacity-30">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-art-dark/60 to-art-dark"></div>
+        </div>
+        <div class="relative z-10 text-center px-4">
+            <div class="mb-4 text-xs font-bold tracking-[0.5em] text-art-accent uppercase animate-pulse">2025 Portfolio</div>
+            <h1 class="text-6xl md:text-8xl font-serif font-bold text-white mb-6">
+                视觉<span class="text-gray-500 italic">奇点</span>
+            </h1>
+            <p class="text-gray-400 text-lg md:text-xl max-w-xl mx-auto mb-10 font-light">
+                Digital Media Artist based in China.<br>
+                融合 3D 影像、交互设计与人工智能。
+            </p>
+            <div class="flex justify-center gap-4">
+                <a href="portfolio.html" class="px-8 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition">浏览作品</a>
+                <a href="https://b23.tv/5cVLdaY" target="_blank" class="px-8 py-3 glass-panel text-white rounded-full hover:bg-white/10 transition flex items-center gap-2">
+                    <i class="fas fa-play text-xs"></i> 最新 Showreel
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. 服务与技能 (Bento Grid 布局) -->
+    <section class="py-24 max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(200px, auto)]">
+            
+            <!-- 大板块：介绍 -->
+            <div class="md:col-span-2 glass-panel p-8 rounded-2xl flex flex-col justify-center">
+                <h2 class="text-3xl font-serif mb-4">不仅是设计，更是<span class="text-art-accent">解决方案</span></h2>
+                <p class="text-gray-400 leading-relaxed">
+                    在数字媒体领域深耕多年，我不仅仅提供静态的画面。无论是利用 Unreal Engine 搭建实时渲染场景，还是使用 ComfyUI 训练专属 Lora 模型，我致力于用最前沿的技术栈为品牌讲述更具沉浸感的故事。
+                </p>
+            </div>
+
+            <!-- 数据板块 -->
+            <div class="glass-panel p-8 rounded-2xl flex flex-col items-center justify-center text-center">
+                <div class="text-5xl font-bold text-white mb-2">50+</div>
+                <div class="text-sm text-gray-500 uppercase tracking-widest">Projects Done</div>
+            </div>
+
+            <!-- 技能栈 1 -->
+            <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition">
+                <i class="fas fa-cube text-3xl text-blue-400 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">3D Motion</h3>
+                <p class="text-sm text-gray-400">Blender / C4D / Octane. 产品渲染与动态视觉设计。</p>
+            </div>
+
+            <!-- 技能栈 2 -->
+            <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition">
+                <i class="fas fa-magic text-3xl text-purple-400 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">AIGC Workflow</h3>
+                <p class="text-sm text-gray-400">Stable Diffusion / Midjourney. 生成式 AI 辅助创意落地。</p>
+            </div>
+
+            <!-- 技能栈 3 -->
+            <div class="glass-panel p-8 rounded-2xl hover:bg-white/5 transition">
+                <i class="fas fa-film text-3xl text-red-400 mb-4"></i>
+                <h3 class="text-xl font-bold mb-2">Post-Production</h3>
+                <p class="text-sm text-gray-400">Premiere / After Effects. 影视级剪辑与合成特效。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 精选作品 (只展示前2个) -->
+    <section class="py-24 bg-zinc-900/30">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-end mb-12">
+                <h2 class="text-4xl font-serif">近期发布</h2>
+                <a href="portfolio.html" class="text-art-accent hover:underline">查看全部 <i class="fas fa-arrow-right ml-1"></i></a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- 作品 1: 兰博基尼飓风AI广告 -->
+                <div class="group relative aspect-video rounded-xl overflow-hidden glass-panel cursor-pointer" onclick="window.location.href='portfolio.html?open=1'">
+                    <img src="./image/car.jpg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                        <span class="px-6 py-2 border border-white text-white rounded-full">查看详情</span>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent pointer-events-none">
+                        <h3 class="text-2xl font-bold text-white">兰博基尼飓风AI广告</h3>
+                        <p class="text-gray-300 text-sm">AIGC / Video Editing</p>
+                    </div>
+                </div>
+
+                <!-- 作品 2: 静态展示 -->
+                <div class="group relative aspect-video rounded-xl overflow-hidden glass-panel cursor-pointer" onclick="window.location.href='portfolio.html?open=2'">
+                    <img src="./image/03.jpg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                        <span class="px-6 py-2 border border-white text-white rounded-full">查看详情</span>
+                    </div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black to-transparent pointer-events-none">
+                        <h3 class="text-2xl font-bold text-white">虚化5空山新雨后</h3>
+                        <p class="text-gray-300 text-sm">Unreal Engine 5</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部 -->
+    <footer class="py-12 text-center text-gray-600 text-sm border-t border-white/5">
+        <p>&copy; 2025 GaXin Studio.</p>
+    </footer>
+
+    <!-- 音乐播放器 (复制到所有页面) -->
+    <div class="fixed bottom-6 left-6 z-[100]">
+        <div class="glass-panel p-3 rounded-full flex items-center gap-3 pr-6 shadow-2xl">
+            <!-- 上一曲按钮 -->
+            <button @click="prevTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-backward text-xs"></i>
+            </button>
+            
+            <!-- 播放/暂停按钮 -->
+            <div @click="togglePlay()" class="relative w-10 h-10 cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&q=80" 
+                     class="w-full h-full rounded-full object-cover border border-white/20 spin-slow" 
+                     :class="isPlaying ? '' : 'paused'">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas text-[10px] text-white" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+                </div>
+            </div>
+            
+            <!-- 下一曲按钮 -->
+            <button @click="nextTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-forward text-xs"></i>
+            </button>
+            
+            <!-- 歌曲信息和音量控制 -->
+            <div class="flex flex-col">
+                <span class="text-xs font-bold text-white w-24 truncate" x-text="currentTrack?.title || 'Lofi Study Beat'"></span>
+                <input type="range" min="0" max="1" step="0.05" x-model="volume" @input="updateVolume" class="w-16 h-1 mt-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+        </div>
+        <audio x-ref="audio" loop></audio>
+    </div>
+
+    <script>
+        function globalData() {
+            return {
+                isPlaying: false,
+                volume: 0.3,
+                currentTrackIndex: 0,
+                
+                // 音乐列表，使用本地Music文件夹中的歌曲
+                tracks: [
+                    { title: 'believer', src: './Music/believer.mp3' },
+                    { title: 'faded', src: './Music/faded.mp3' },
+                    { title: 'Lofi Study Beat', src: './Music/Lofi Study Beat.mp3' },
+                    { title: 'sky(radio edit)', src: './Music/sky(radio edit).mp3' },
+                    { title: 'Way Back', src: './Music/Way Back - Cozi Zuehlsdorff.mp3' }
+                ],
+                
+                get currentTrack() {
+                    return this.tracks[this.currentTrackIndex];
+                },
+                
+                initPlayer() {
+                    const audio = this.$refs.audio;
+                    // 1. 设置初始曲目
+                    audio.src = this.currentTrack.src;
+                    
+                    // 2. 恢复音量
+                    const savedVol = localStorage.getItem('site_volume');
+                    if(savedVol) this.volume = parseFloat(savedVol);
+                    audio.volume = this.volume;
+
+                    // 3. 尝试恢复播放进度
+                    const savedTime = localStorage.getItem('audio_time');
+                    const wasPlaying = localStorage.getItem('audio_playing') === 'true';
+                    
+                    if(savedTime) audio.currentTime = parseFloat(savedTime);
+                    
+                    // 4. 自动保存进度循环
+                    setInterval(() => {
+                        localStorage.setItem('audio_time', audio.currentTime);
+                        localStorage.setItem('audio_playing', this.isPlaying);
+                        localStorage.setItem('currentTrackIndex', this.currentTrackIndex);
+                    }, 1000);
+
+                    // 注意：浏览器通常禁止自动播放，除非用户有过交互。
+                    // 这里我们尝试如果之前是播放状态，则尝试自动播放
+                    if(wasPlaying) {
+                        const playPromise = audio.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(_ => { this.isPlaying = true; })
+                            .catch(error => { console.log("需用户交互才能播放"); this.isPlaying = false; });
+                        }
+                    }
+                },
+                
+                togglePlay() {
+                    const audio = this.$refs.audio;
+                    if(this.isPlaying) audio.pause();
+                    else audio.play();
+                    this.isPlaying = !this.isPlaying;
+                    localStorage.setItem('audio_playing', this.isPlaying);
+                },
+                
+                updateVolume() {
+                    this.$refs.audio.volume = this.volume;
+                    localStorage.setItem('site_volume', this.volume);
+                },
+                
+                prevTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+                    this.loadTrack();
+                },
+                
+                nextTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+                    this.loadTrack();
+                },
+                
+                loadTrack() {
+                    const audio = this.$refs.audio;
+                    audio.src = this.currentTrack.src;
+                    audio.currentTime = 0;
+                    if(this.isPlaying) {
+                        audio.play();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

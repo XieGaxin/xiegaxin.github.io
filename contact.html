@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GaXin | 联系</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #050505; color: #f3f4f6; overflow-x: hidden; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass-panel { background: rgba(30, 30, 30, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .spin-slow { animation: spin 8s linear infinite; }
+        .paused { animation-play-state: paused; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { 'art-accent': '#d4af37', 'art-dark': '#0a0a0a' } } }
+        }
+    </script>
+</head>
+<body x-data="pageData()" x-init="initPlayer()" class="min-h-screen flex flex-col">
+
+    <!-- 导航栏 (注意：联系 链接高亮) -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="index.html" class="font-serif italic text-2xl tracking-wider text-white">GaXin</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">首页</a>
+                    <a href="portfolio.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">全部作品</a>
+                    <a href="about.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">关于我</a>
+                    <a href="contact.html" class="text-art-accent font-bold px-3 py-2 text-sm">联系</a>
+                    <a href="certificates.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">获奖证书</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center pt-20 px-6">
+        <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12">
+            
+            <!-- 左侧：文字信息 -->
+            <div class="flex flex-col justify-center">
+                <h1 class="text-4xl md:text-6xl font-serif font-bold mb-6">Let's Create<br><span class="text-art-accent">Something Real.</span></h1>
+                <p class="text-gray-400 mb-12 max-w-md">无论是商业合作、项目委托，还是单纯的技术交流，随时欢迎联系。让我们一起把疯狂的想法变成现实。</p>
+                
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4 group cursor-pointer">
+                        <div class="w-12 h-12 rounded-full glass-panel flex items-center justify-center group-hover:bg-art-accent group-hover:text-black transition">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 uppercase">Email</div>
+                            <div class="text-lg font-bold">xjx1804684316@163.com</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 group cursor-pointer">
+                        <div class="w-12 h-12 rounded-full glass-panel flex items-center justify-center group-hover:bg-[#00d632] group-hover:text-white transition">
+                            <i class="fab fa-weixin"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 uppercase">WeChat</div>
+                            <div class="text-lg font-bold">xjxwx01</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 group cursor-pointer">
+                        <div class="w-12 h-12 rounded-full glass-panel flex items-center justify-center group-hover:bg-[#fb7299] group-hover:text-white transition">
+                            <i class="fab fa-bilibili"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 uppercase">Bilibili</div>
+                            <div class="text-lg font-bold">@陌鱼永</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：联系表单 -->
+            <div class="glass-panel p-8 md:p-12 rounded-3xl relative overflow-hidden">
+                <!-- 装饰光 -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-art-accent/10 blur-[100px] -z-10"></div>
+                
+                <form action="mailto:your@email.com" method="post" enctype="text/plain" class="space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Name</label>
+                        <input type="text" placeholder="你的名字" class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white focus:outline-none focus:border-art-accent transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Email</label>
+                        <input type="email" placeholder="你的邮箱" class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white focus:outline-none focus:border-art-accent transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Message</label>
+                        <textarea rows="4" placeholder="关于合作意向..." class="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white focus:outline-none focus:border-art-accent transition"></textarea>
+                    </div>
+                    <button type="button" @click="window.open('https://mail.163.com/', '_blank')" class="w-full py-4 bg-art-accent text-black font-bold rounded-lg hover:bg-white transition flex items-center justify-center gap-2">
+                        发送邮件 <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="py-8 text-center text-gray-600 text-xs">
+        <p>&copy; 2024 GaXin Studio. Based in Earth.</p>
+    </footer>
+
+    <!-- 底部播放器 (必须包含) -->
+    <div class="fixed bottom-6 left-6 z-[100]">
+        <div class="glass-panel p-3 rounded-full flex items-center gap-3 pr-6 shadow-2xl">
+            <!-- 上一曲按钮 -->
+            <button @click="prevTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-backward text-xs"></i>
+            </button>
+            
+            <!-- 播放/暂停按钮 -->
+            <div @click="togglePlay()" class="relative w-10 h-10 cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&q=80" class="w-full h-full rounded-full object-cover border border-white/20 spin-slow" :class="isPlaying ? '' : 'paused'">
+                <div class="absolute inset-0 flex items-center justify-center"><i class="fas text-[10px] text-white" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i></div>
+            </div>
+            
+            <!-- 下一曲按钮 -->
+            <button @click="nextTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-forward text-xs"></i>
+            </button>
+            
+            <!-- 歌曲信息和音量控制 -->
+            <div class="flex flex-col">
+                <span class="text-xs font-bold text-white w-24 truncate" x-text="currentTrack?.title || 'Lofi Study Beat'"></span>
+                <input type="range" min="0" max="1" step="0.05" x-model="volume" @input="updateVolume" class="w-16 h-1 mt-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+        </div>
+        <audio x-ref="audio" loop></audio>
+    </div>
+
+    <script>
+        function pageData() {
+            return {
+                isPlaying: false,
+                volume: 0.3,
+                currentTrackIndex: 0,
+                
+                // 音乐列表，使用本地Music文件夹中的歌曲
+                tracks: [
+                    { title: 'believer', src: './Music/believer.mp3' },
+                    { title: 'faded', src: './Music/faded.mp3' },
+                    { title: 'Lofi Study Beat', src: './Music/Lofi Study Beat.mp3' },
+                    { title: 'sky(radio edit)', src: './Music/sky(radio edit).mp3' },
+                    { title: 'Way Back', src: './Music/Way Back - Cozi Zuehlsdorff.mp3' }
+                ],
+                
+                get currentTrack() {
+                    return this.tracks[this.currentTrackIndex];
+                },
+                
+                initPlayer() {
+                    const audio = this.$refs.audio;
+                    // 1. 设置初始曲目
+                    audio.src = this.currentTrack.src;
+                    
+                    const savedVol = localStorage.getItem('site_volume');
+                    if(savedVol) this.volume = parseFloat(savedVol);
+                    audio.volume = this.volume;
+                    const savedTime = localStorage.getItem('audio_time');
+                    const wasPlaying = localStorage.getItem('audio_playing') === 'true';
+                    if(savedTime) audio.currentTime = parseFloat(savedTime);
+                    setInterval(() => {
+                        localStorage.setItem('audio_time', audio.currentTime);
+                        localStorage.setItem('audio_playing', this.isPlaying);
+                        localStorage.setItem('currentTrackIndex', this.currentTrackIndex);
+                    }, 1000);
+                    if(wasPlaying) {
+                        const playPromise = audio.play();
+                        if (playPromise !== undefined) { playPromise.then(_ => { this.isPlaying = true; }).catch(e => { this.isPlaying = false; }); }
+                    }
+                },
+                togglePlay() {
+                    const audio = this.$refs.audio;
+                    if(this.isPlaying) audio.pause(); else audio.play();
+                    this.isPlaying = !this.isPlaying;
+                    localStorage.setItem('audio_playing', this.isPlaying);
+                },
+                updateVolume() {
+                    this.$refs.audio.volume = this.volume;
+                    localStorage.setItem('site_volume', this.volume);
+                },
+                prevTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+                    this.loadTrack();
+                },
+                nextTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+                    this.loadTrack();
+                },
+                loadTrack() {
+                    const audio = this.$refs.audio;
+                    audio.src = this.currentTrack.src;
+                    audio.currentTime = 0;
+                    if(this.isPlaying) {
+                        audio.play();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

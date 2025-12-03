@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GaXin | 关于我</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: #050505; color: #f3f4f6; overflow-x: hidden; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass-panel { background: rgba(30, 30, 30, 0.4); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        /* 音乐播放器动画 */
+        .spin-slow { animation: spin 8s linear infinite; }
+        .paused { animation-play-state: paused; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { 'art-accent': '#d4af37', 'art-dark': '#0a0a0a' } } }
+        }
+    </script>
+</head>
+<body x-data="pageData()" x-init="initPlayer()" class="min-h-screen flex flex-col">
+
+    <!-- 导航栏 (注意：关于我 链接高亮) -->
+    <nav class="fixed w-full z-50 glass-panel border-b-0">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="index.html" class="font-serif italic text-2xl tracking-wider text-white">GaXin</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">首页</a>
+                    <a href="portfolio.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">全部作品</a>
+                    <a href="about.html" class="text-art-accent font-bold px-3 py-2 text-sm">关于我</a>
+                    <a href="contact.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">联系</a>
+                    <a href="certificates.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">获奖证书</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-32 pb-20 max-w-7xl mx-auto px-6 w-full">
+        
+        <!-- 1. 个人简介区域 -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-24">
+            <div class="relative">
+                <!-- 图片 -->
+                <div class="aspect-[3/4] rounded-2xl overflow-hidden glass-panel p-2">
+                    <img src="./image/person.jpg" class="w-full h-full object-cover rounded-xl grayscale hover:grayscale-0 transition duration-700">
+                </div>
+                <!-- 装饰性背景字 -->
+                <div class="absolute -z-10 -top-10 -left-10 text-[120px] font-serif font-bold text-white/5 leading-none">WHO<br>AM I</div>
+            </div>
+            
+            <div>
+                <h1 class="text-4xl md:text-5xl font-serif mb-6">探索数字边界的<br><span class="text-art-accent italic">造梦师</span></h1>
+                <div class="prose prose-invert text-gray-400 space-y-4">
+                    <p>你好，我是 GaXin。一名热衷于将技术与艺术融合的数字媒体创作者。</p>
+                    <p>我的创作旅程始于对光影的好奇。从最初的摄影快门，到后来在 Blender 中构建虚拟世界，再到如今利用 AI 训练专属模型，我始终在寻找更高效、更震撼的视觉表达方式。</p>
+                    <p>我相信，在这个时代，工具只是手段，唯有想象力才是核心竞争力。</p>
+                </div>
+                
+                <!-- 签名或标语 -->
+                <div class="mt-8 pt-8 border-t border-white/10 font-serif italic text-2xl text-gray-500">
+                    "Art is not what you see, but what you make others see."
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 经历时间轴 & 软件技能 -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-16 mb-24">
+            <!-- 左侧：经历 -->
+            <div>
+                <h2 class="text-2xl font-serif mb-8 flex items-center gap-3"><i class="fas fa-history text-art-accent"></i> 经历路线</h2>
+                <div class="space-y-8 border-l border-white/10 ml-3 pl-8 relative">
+                    <!-- 时间点 1 -->
+                    <div class="relative">
+                        <div class="absolute -left-[38px] w-5 h-5 bg-art-accent rounded-full border-4 border-[#050505]"></div>
+                        <span class="text-xs text-art-accent font-bold tracking-widest">2023 - PRESENT</span>
+                        <h3 class="text-xl font-bold mt-1">自由 3D 视觉设计师</h3>
+                        <p class="text-gray-500 text-sm mt-2">为多个品牌提供产品渲染与动态视觉服务，探索 AIGC 工作流落地。</p>
+                    </div>
+                    <!-- 时间点 2 -->
+                    <div class="relative">
+                        <div class="absolute -left-[38px] w-5 h-5 bg-gray-700 rounded-full border-4 border-[#050505]"></div>
+                        <span class="text-xs text-gray-500 font-bold tracking-widest">2021 - 2025</span>
+                        <h3 class="text-xl font-bold mt-1">数字媒体艺术专业</h3>
+                        <p class="text-gray-500 text-sm mt-2">系统学习影视后期、交互设计与三维建模基础。获得设计大赛国奖奖。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：技能 -->
+            <div>
+                <h2 class="text-2xl font-serif mb-8 flex items-center gap-3"><i class="fas fa-layer-group text-art-accent"></i> 核心技能</h2>
+                <div class="space-y-6">
+                    <!-- 技能条 -->
+                    <div x-data="{ width: '90%' }">
+                        <div class="flex justify-between text-sm mb-2"><span>Blender / C4D</span><span class="text-art-accent">90%</span></div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-art-accent" :style="`width: ${width}`"></div></div>
+                    </div>
+                    <div x-data="{ width: '85%' }">
+                        <div class="flex justify-between text-sm mb-2"><span>Premiere / AE</span><span class="text-art-accent">85%</span></div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-art-accent" :style="`width: ${width}`"></div></div>
+                    </div>
+                    <div x-data="{ width: '70%' }">
+                        <div class="flex justify-between text-sm mb-2"><span>Stable Diffusion / ComfyUI</span><span class="text-art-accent">70%</span></div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-art-accent" :style="`width: ${width}`"></div></div>
+                    </div>
+                    <div x-data="{ width: '60%' }">
+                        <div class="flex justify-between text-sm mb-2"><span>Unreal Engine 5</span><span class="text-art-accent">60%</span></div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden"><div class="h-full bg-art-accent" :style="`width: ${width}`"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 装备清单 (Gear List) -->
+        <section class="glass-panel p-8 rounded-2xl">
+            <h2 class="text-2xl font-serif mb-6 text-center">我的数字军火库</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="p-4 bg-white/5 rounded-xl hover:bg-white/10 transition">
+                    <i class="fas fa-desktop text-3xl mb-3 text-gray-400"></i>
+                    <div class="font-bold">Workstation</div>
+                    <div class="text-xs text-gray-500">RTX 3060 / 12G RAM</div>
+                </div>
+                <div class="p-4 bg-white/5 rounded-xl hover:bg-white/10 transition">
+                    <i class="fas fa-camera text-3xl mb-3 text-gray-400"></i>
+                    <div class="font-bold">Camera</div>
+                    <div class="text-xs text-gray-500">Canon 80D</div>
+                </div>
+                <div class="p-4 bg-white/5 rounded-xl hover:bg-white/10 transition">
+                    <i class="fas fa-tablet-alt text-3xl mb-3 text-gray-400"></i>
+                    <div class="font-bold">Tablet</div>
+                    <div class="text-xs text-gray-500">Redmi Note11 5G</div>
+                </div>
+                <div class="p-4 bg-white/5 rounded-xl hover:bg-white/10 transition">
+                    <i class="fas fa-headphones text-3xl mb-3 text-gray-400"></i>
+                    <div class="font-bold">Audio</div>
+                    <div class="text-xs text-gray-500">BLASTER cinema6+</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 底部播放器 (必须包含) -->
+    <div class="fixed bottom-6 left-6 z-[100]">
+        <div class="glass-panel p-3 rounded-full flex items-center gap-3 pr-6 shadow-2xl">
+            <!-- 上一曲按钮 -->
+            <button @click="prevTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-backward text-xs"></i>
+            </button>
+            
+            <!-- 播放/暂停按钮 -->
+            <div @click="togglePlay()" class="relative w-10 h-10 cursor-pointer">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&q=80" class="w-full h-full rounded-full object-cover border border-white/20 spin-slow" :class="isPlaying ? '' : 'paused'">
+                <div class="absolute inset-0 flex items-center justify-center"><i class="fas text-[10px] text-white" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i></div>
+            </div>
+            
+            <!-- 下一曲按钮 -->
+            <button @click="nextTrack()" class="w-8 h-8 flex items-center justify-center text-white hover:text-art-accent transition">
+                <i class="fas fa-forward text-xs"></i>
+            </button>
+            
+            <!-- 歌曲信息和音量控制 -->
+            <div class="flex flex-col">
+                <span class="text-xs font-bold text-white w-24 truncate" x-text="currentTrack?.title || 'Lofi Study Beat'"></span>
+                <input type="range" min="0" max="1" step="0.05" x-model="volume" @input="updateVolume" class="w-16 h-1 mt-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            </div>
+        </div>
+        <audio x-ref="audio" loop></audio>
+    </div>
+
+    <!-- 统一的逻辑脚本 -->
+    <script>
+        function pageData() {
+            return {
+                isPlaying: false,
+                volume: 0.3,
+                currentTrackIndex: 0,
+                
+                // 音乐列表，使用本地Music文件夹中的歌曲
+                tracks: [
+                    { title: 'believer', src: './Music/believer.mp3' },
+                    { title: 'faded', src: './Music/faded.mp3' },
+                    { title: 'Lofi Study Beat', src: './Music/Lofi Study Beat.mp3' },
+                    { title: 'sky(radio edit)', src: './Music/sky(radio edit).mp3' },
+                    { title: 'Way Back', src: './Music/Way Back - Cozi Zuehlsdorff.mp3' }
+                ],
+                
+                get currentTrack() {
+                    return this.tracks[this.currentTrackIndex];
+                },
+                
+                initPlayer() {
+                    const audio = this.$refs.audio;
+                    // 1. 设置初始曲目
+                    audio.src = this.currentTrack.src;
+                    
+                    const savedVol = localStorage.getItem('site_volume');
+                    if(savedVol) this.volume = parseFloat(savedVol);
+                    audio.volume = this.volume;
+                    const savedTime = localStorage.getItem('audio_time');
+                    const wasPlaying = localStorage.getItem('audio_playing') === 'true';
+                    if(savedTime) audio.currentTime = parseFloat(savedTime);
+                    setInterval(() => {
+                        localStorage.setItem('audio_time', audio.currentTime);
+                        localStorage.setItem('audio_playing', this.isPlaying);
+                        localStorage.setItem('currentTrackIndex', this.currentTrackIndex);
+                    }, 1000);
+                    if(wasPlaying) {
+                        const playPromise = audio.play();
+                        if (playPromise !== undefined) { playPromise.then(_ => { this.isPlaying = true; }).catch(e => { this.isPlaying = false; }); }
+                    }
+                },
+                togglePlay() {
+                    const audio = this.$refs.audio;
+                    if(this.isPlaying) audio.pause(); else audio.play();
+                    this.isPlaying = !this.isPlaying;
+                    localStorage.setItem('audio_playing', this.isPlaying);
+                },
+                updateVolume() {
+                    this.$refs.audio.volume = this.volume;
+                    localStorage.setItem('site_volume', this.volume);
+                },
+                prevTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+                    this.loadTrack();
+                },
+                nextTrack() {
+                    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+                    this.loadTrack();
+                },
+                loadTrack() {
+                    const audio = this.$refs.audio;
+                    audio.src = this.currentTrack.src;
+                    audio.currentTime = 0;
+                    if(this.isPlaying) {
+                        audio.play();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
