@@ -26,6 +26,40 @@
         .paused { animation-play-state: paused; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .certificate-card:hover img { transform: scale(1.03); }
+        
+        /* 横向滚动动画 */
+        @keyframes scrollLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        @keyframes scrollRight {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+        
+        .scroll-container {
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .scroll-row {
+            display: flex;
+            width: 200%;
+        }
+        
+        .scroll-left {
+            animation: scrollLeft 30s linear infinite;
+        }
+        
+        .scroll-right {
+            animation: scrollRight 30s linear infinite;
+        }
+        
+        .pause-animation {
+            animation-play-state: paused;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -84,15 +118,54 @@
         </template>
         
         <!-- 证书展示区域 -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            <template x-for="cert in certificates" :key="cert.id">
-                <div class="certificate-card group relative aspect-[4/3] rounded-xl overflow-hidden glass-panel p-4 cursor-pointer transition-all duration-300 hover:shadow-lg" @click="openModal(cert)">
-                    <img :src="cert.image" :alt="cert.title" class="w-full h-full object-cover rounded-lg transition duration-500 group-hover:scale-103" loading="lazy">
-                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur-sm">
-                        <h3 class="text-sm font-bold text-white text-center" x-text="cert.title"></h3>
-                    </div>
+        <div class="relative overflow-hidden my-12">
+            <!-- 第一行：向左滚动 -->
+            <div class="scroll-container mb-8" @mouseenter="pauseScroll" @mouseleave="resumeScroll">
+                <div class="scroll-row scroll-left flex space-x-6">
+                    <!-- 证书数据 -->
+                    <template x-for="cert in certificates" :key="cert.id">
+                        <div class="certificate-card relative aspect-[4/3] min-w-[200px] sm:min-w-[250px] rounded-xl overflow-hidden glass-panel p-4 cursor-pointer transition-all duration-300 hover:shadow-lg" @click="openModal(cert)">
+                            <img :src="cert.image" :alt="cert.title" class="w-full h-full object-cover rounded-lg transition duration-500 group-hover:scale-103" loading="lazy">
+                            <div class="absolute bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur-sm">
+                                <h3 class="text-sm font-bold text-white text-center" x-text="cert.title"></h3>
+                            </div>
+                        </div>
+                    </template>
+                    <!-- 克隆一份数据以实现无缝滚动 -->
+                    <template x-for="cert in certificates" :key="`clone1-${cert.id}`">
+                        <div class="certificate-card relative aspect-[4/3] min-w-[200px] sm:min-w-[250px] rounded-xl overflow-hidden glass-panel p-4 cursor-pointer transition-all duration-300 hover:shadow-lg" @click="openModal(cert)">
+                            <img :src="cert.image" :alt="cert.title" class="w-full h-full object-cover rounded-lg transition duration-500 group-hover:scale-103" loading="lazy">
+                            <div class="absolute bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur-sm">
+                                <h3 class="text-sm font-bold text-white text-center" x-text="cert.title"></h3>
+                            </div>
+                        </div>
+                    </template>
                 </div>
-            </template>
+            </div>
+            
+            <!-- 第二行：向右滚动 -->
+            <div class="scroll-container" @mouseenter="pauseScroll" @mouseleave="resumeScroll">
+                <div class="scroll-row scroll-right flex space-x-6">
+                    <!-- 克隆一份数据以实现无缝滚动 -->
+                    <template x-for="cert in certificates" :key="`clone2-${cert.id}`">
+                        <div class="certificate-card relative aspect-[4/3] min-w-[200px] sm:min-w-[250px] rounded-xl overflow-hidden glass-panel p-4 cursor-pointer transition-all duration-300 hover:shadow-lg" @click="openModal(cert)">
+                            <img :src="cert.image" :alt="cert.title" class="w-full h-full object-cover rounded-lg transition duration-500 group-hover:scale-103" loading="lazy">
+                            <div class="absolute bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur-sm">
+                                <h3 class="text-sm font-bold text-white text-center" x-text="cert.title"></h3>
+                            </div>
+                        </div>
+                    </template>
+                    <!-- 证书数据 -->
+                    <template x-for="cert in certificates" :key="`original2-${cert.id}`">
+                        <div class="certificate-card relative aspect-[4/3] min-w-[200px] sm:min-w-[250px] rounded-xl overflow-hidden glass-panel p-4 cursor-pointer transition-all duration-300 hover:shadow-lg" @click="openModal(cert)">
+                            <img :src="cert.image" :alt="cert.title" class="w-full h-full object-cover rounded-lg transition duration-500 group-hover:scale-103" loading="lazy">
+                            <div class="absolute bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur-sm">
+                                <h3 class="text-sm font-bold text-white text-center" x-text="cert.title"></h3>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </div>
         
         <!-- 证书查看模态框 -->
@@ -185,12 +258,12 @@
                 
                 // 证书数据
                 certificates: [
-                    { id: 1, title: '2024学院奖', image: './image/2024学院奖/S-n22820243687544.png' },
+                    { id: 1, title: '2024学院奖', image: './image/2024学院奖/S-n22820243687544.jpg' },
                     { id: 2, title: '2025学院奖', image: './image/2025学院奖/01.png' },
                     { id: 3, title: '2025学院奖', image: './image/2025学院奖/T-a25020243896926.png' },
-                    { id: 4, title: '第十四届三创赛', image: './image/第十四届三创赛/GS2024141233280700622358.jpeg' },
+                    { id: 4, title: '第十四届三创赛', image: './image/第十四届三创赛/GS2024141233280700622358.jpg' },
                     { id: 5, title: '蓝桥杯', image: './image/蓝桥杯/谢伽鑫_1547330.jpg' },
-                    { id: 6, title: '米兰设计周', image: './image/米兰设计周/202400FM36010S020ML212464_212464.png' },
+                    { id: 6, title: '米兰设计周', image: './image/米兰设计周/202400FM36010S020ML212464_212464.jpg' },
                     { id: 7, title: '全国海洋设计大赛', image: './image/全国海洋设计大赛/提取自媒体动漫佳作奖4.jpg' },
                     { id: 8, title: '全国海洋设计大赛', image: './image/全国海洋设计大赛/提取自平面设计组3001-4486佳作奖.jpg' },
                     { id: 9, title: '中国大学生计算机设计大赛', image: './image/中国大学生计算机设计大赛/草药公园.jpg' }
@@ -245,6 +318,21 @@
                         this.zoomIn();
                     } else {
                         this.zoomOut();
+                    }
+                },
+                
+                // 横向滚动控制方法
+                pauseScroll(event) {
+                    const scrollRow = event.currentTarget.querySelector('.scroll-row');
+                    if (scrollRow) {
+                        scrollRow.classList.add('pause-animation');
+                    }
+                },
+                
+                resumeScroll(event) {
+                    const scrollRow = event.currentTarget.querySelector('.scroll-row');
+                    if (scrollRow) {
+                        scrollRow.classList.remove('pause-animation');
                     }
                 },
                 

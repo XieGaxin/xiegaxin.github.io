@@ -30,36 +30,19 @@
 </head>
 <body x-data="portfolioData()" x-init="initPlayer()" class="min-h-screen flex flex-col">
 
-    <!-- 导航栏 (注意：全部作品 链接高亮) -->
+    <!-- 1. 顶部导航 (保持一致) -->
     <nav class="fixed w-full z-50 glass-panel border-b-0">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
                 <a href="index.html" class="font-serif italic text-2xl tracking-wider text-white">GaXin</a>
-                
-                <!-- 桌面端导航 -->
                 <div class="hidden md:flex space-x-8">
                     <a href="index.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">首页</a>
+                    <!-- 当前页面高亮 -->
                     <a href="portfolio.html" class="text-art-accent font-bold px-3 py-2 text-sm">全部作品</a>
                     <a href="about.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">关于我</a>
                     <a href="contact.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">联系</a>
                     <a href="certificates.html" class="text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">获奖证书</a>
                 </div>
-                
-                <!-- 移动端汉堡菜单按钮 -->
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-white hover:text-art-accent transition p-2">
-                    <i class="fas text-xl" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- 移动端导航菜单 -->
-        <div x-show="mobileMenuOpen" class="md:hidden glass-panel border-t border-gray-800">
-            <div class="px-6 py-4 space-y-4">
-                <a href="index.html" class="block text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">首页</a>
-                <a href="portfolio.html" class="block text-art-accent font-bold px-3 py-2 text-sm">全部作品</a>
-                <a href="about.html" class="block text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">关于我</a>
-                <a href="contact.html" class="block text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">联系</a>
-                <a href="certificates.html" class="block text-gray-300 hover:text-art-accent transition px-3 py-2 text-sm">获奖证书</a>
             </div>
         </div>
     </nav>
@@ -85,7 +68,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <template x-for="item in paginatedItems" :key="item.id">
                 <div class="work-card group relative aspect-[4/3] rounded-lg overflow-hidden glass-panel cursor-pointer" @click="openModal(item)">
-                    <img :src="item.image" class="w-full h-full object-cover transition duration-500 group-hover:scale-103" loading="lazy">
+                    <img :src="item.image" class="w-full h-full object-cover transition duration-500 group-hover:scale-103">
                     <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center p-4 text-center">
                         <span class="text-art-accent text-xs uppercase tracking-widest mb-2" x-text="item.category"></span>
                         <h3 class="text-xl font-bold text-white" x-text="item.title"></h3>
@@ -133,13 +116,8 @@
                          <template x-if="currentItem.type === 'video' && currentItem.bilibili">
                             <iframe :src="currentItem.bilibili" class="w-full h-full" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
                          </template>
-                         <template x-else-if="currentItem.type === 'link'">
-                            <!-- 对于链接类型的作品，仍然显示图片 -->
-                            <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto" loading="lazy">
-                         </template>
-                         <template x-else>
-                            <!-- 其他类型（图片） -->
-                            <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto" loading="lazy">
+                         <template x-if="currentItem.type !== 'video' || !currentItem.bilibili">
+                            <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto">
                          </template>
                     </div>
                     <div class="p-8">
@@ -196,7 +174,6 @@
                 filter: 'all',
                 modalOpen: false,
                 currentItem: null,
-                mobileMenuOpen: false,
                 isPlaying: false,
                 volume: 0.3,
                 currentTrackIndex: 0,
@@ -205,13 +182,11 @@
                 currentPage: 1,
                 itemsPerPage: 6,
                 
-                // 音乐列表，使用本地Music文件夹中的歌曲
+                // 音乐列表，使用本地音乐目录
                 tracks: [
-                    { title: 'believer', src: './Music/believer.mp3' },
-                    { title: 'faded', src: './Music/faded.mp3' },
-                    { title: 'Lofi Study Beat', src: './Music/Lofi Study Beat.mp3' },
-                    { title: 'sky(radio edit)', src: './Music/sky(radio edit).mp3' },
-                    { title: 'Way Back', src: './Music/Way Back - Cozi Zuehlsdorff.mp3' }
+                    { title: 'Lofi Study Beat', src: './Music/audio_1808fbf07a.mp3' },
+                    { title: 'Lofi Study Beat 2', src: './Music/audio_1808fbf07a.mp3' },
+                    { title: 'Lofi Study Beat 3', src: './Music/audio_1808fbf07a.mp3' }
                 ],
                 
                 get currentTrack() {
@@ -229,7 +204,9 @@
                     {
                         id: 1, title: '兰博基尼飓风 AI 广告', category: 'video', type: 'video',
                         image: './image/car.jpg',
-                        desc: '使用生成式 AI 工作流探索商业广告的边界。'
+                        desc: '使用生成式 AI 工作流探索商业广告的边界。',
+                        link: 'https://www.bilibili.com/video/BV1Ln1pBTEAt/?spm_id_from=333.1391.0.0&vd_source=5b1e7569b5482fd504f966658451bbc8',
+                        bilibili: 'https://player.bilibili.com/player.html?aid=1139833635&bvid=BV1Ln1pBTEAt&cid=1578923095&page=1'
                     },
                     // 作品 2：专栏
                     {
@@ -242,14 +219,12 @@
                     { id: 3, title: '狂鼠', category: '3d', image: './image/狂鼠.png', desc: 'Blender 硬表面' },
                     { id: 4, title: '科宝IP', category: '3d', image: './image/科宝渲染1.png', desc: '硬表面建模练习' },
                     { id: 5, title: 'IP', category: 'photo', image: './image/boy_Rander.png', desc: '人物IP' },
-                    { id: 18, title: '作品 18', category: 'video', image: './image/22.png', desc: '作品描述' },
-                    { id: 6, title: '潮流鞋', category: '3d', image: './image/23.png', desc: '作品描述' },
+                    { id: 6, title: '潮流鞋', category: 'video', image: './image/06.png', desc: '生活记录' },
                     // 占位作品位置，可用于添加更多图片作品
                     { id: 7, title: '作品 7', category: '3d', image: './image/01.jpg', desc: '作品描述' },
                     { id: 8, title: '作品 8', category: 'photo', image: './image/03.jpg', desc: '作品描述' },
-                    { id: 9, title: '作品 9', category: 'video', image: './image/07.png', desc: '作品描述' },
+                    { id: 9, title: '作品 9', category: 'video', image: './image/04.jpg', desc: '作品描述' },
                     { id: 10, title: '作品 10', category: '3d', image: './image/05.jpg', desc: '作品描述' },
-                    { id: 25, title: '作品 25', category: '3d', image: './image/02.jpg', desc: '作品描述' },
                     { id: 11, title: '作品 11', category: 'photo', image: './image/06.png', desc: '作品描述' },
                     { id: 12, title: '作品 12', category: 'video', image: './image/07.png', desc: '作品描述' },
                     { id: 13, title: '作品 13', category: '3d', image: './image/机甲.png', desc: '作品描述' },
@@ -258,12 +233,14 @@
                     // 更多预留作品位置
                     { id: 16, title: '作品 16', category: '3d', image: './image/机甲侧视图.png', desc: '作品描述' },
                     { id: 17, title: '作品 17', category: 'photo', image: './image/机甲背视图.png', desc: '作品描述' },
+                    { id: 18, title: '作品 18', category: 'video', image: './image/22.png', desc: '作品描述' },
                     { id: 19, title: '作品 19', category: '3d', image: './image/23.png', desc: '作品描述' },
                     { id: 20, title: '作品 20', category: 'photo', image: './image/06.png', desc: '作品描述' },
                     { id: 21, title: '作品 21', category: 'video', image: './image/07.png', desc: '作品描述' },
                     { id: 22, title: '作品 22', category: '3d', image: './image/red2.png', desc: '作品描述' },
                     { id: 23, title: '作品 23', category: 'photo', image: './image/科宝渲染1侧视图.png', desc: '作品描述' },
                     { id: 24, title: '作品 24', category: 'video', image: './image/科宝渲染1后视.png', desc: '作品描述' },
+                    { id: 25, title: '作品 25', category: '3d', image: './image/02.jpg', desc: '作品描述' },
                 ],
                 
                 get filteredItems() {
@@ -337,23 +314,6 @@
                         const playPromise = audio.play();
                         if (playPromise !== undefined) {
                             playPromise.then(_ => { this.isPlaying = true; }).catch(e => { this.isPlaying = false; });
-                        }
-                    }
-                    
-                    // 处理URL参数，打开指定作品
-                    this.handleUrlParams();
-                },
-                
-                // 处理URL参数
-                handleUrlParams() {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const openId = urlParams.get('open');
-                    if (openId) {
-                        const item = this.items.find(i => i.id == openId);
-                        if (item) {
-                            setTimeout(() => {
-                                this.openModal(item);
-                            }, 500); // 延迟打开，确保页面完全加载
                         }
                     }
                 },
