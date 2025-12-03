@@ -112,12 +112,26 @@
             <template x-if="currentItem">
                 <div>
                     <!-- 媒体区域 -->
-                    <div class="w-full aspect-video bg-black flex items-center justify-center p-4">
+                    <div class="w-full aspect-video bg-black p-4">
                          <template x-if="currentItem.type === 'video' && currentItem.bilibili">
                             <iframe :src="currentItem.bilibili" class="w-full h-full" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
                          </template>
                          <template x-if="currentItem.type !== 'video' || !currentItem.bilibili">
-                            <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto">
+                            <div class="w-full h-full overflow-hidden relative" @wheel.prevent="handleZoom">
+                                <div class="absolute inset-0 flex items-center justify-center" 
+                                     @mousedown="startDrag($event)" 
+                                     @mousemove="drag($event)" 
+                                     @mouseup="endDrag" 
+                                     @mouseleave="endDrag"
+                                     @touchstart="handleTouchStart"
+                                     @touchmove="handleTouchMove"
+                                     @touchend="handleTouchEnd"
+                                     :style="`cursor: ${isDragging ? 'grabbing' : 'grab'}`">
+                                    <img :src="currentItem.image" 
+                                         class="transition-transform duration-0" 
+                                         :style="`transform: scale(${zoomLevel}) translate(${translateX}px, ${translateY}px)`">
+                                </div>
+                            </div>
                          </template>
                     </div>
                     <div class="p-8">
@@ -174,9 +188,26 @@
                 filter: 'all',
                 modalOpen: false,
                 currentItem: null,
+                zoomLevel: 1.0,
+                minZoom: 0.5,
+                maxZoom: 3.0,
                 isPlaying: false,
                 volume: 0.3,
                 currentTrackIndex: 0,
+                
+                // 拖动相关变量
+                isDragging: false,
+                startX: 0,
+                startY: 0,
+                translateX: 0,
+                translateY: 0,
+                
+                // 触摸相关变量
+                touchStartDistance: 0,
+                touchStartTime: 0,
+                touchStartTranslateX: 0,
+                touchStartTranslateY: 0,
+                touchStartZoom: 0,
                 
                 // 分页功能
                 currentPage: 1,
@@ -237,7 +268,7 @@
                     { id: 19, title: '作品 19', category: '3d', image: './image/23.png', desc: '作品描述' },
                     { id: 20, title: '作品 20', category: 'photo', image: './image/06.png', desc: '作品描述' },
                     { id: 21, title: '作品 21', category: 'video', image: './image/07.png', desc: '作品描述' },
-                    { id: 22, title: '作品 22', category: '3d', image: './image/red2.png', desc: '作品描述' },
+                    { id: 22, title: '作品 22', category: '3d', image: './image/red2.jpg', desc: '作品描述' },
                     { id: 23, title: '作品 23', category: 'photo', image: './image/科宝渲染1侧视图.png', desc: '作品描述' },
                     { id: 24, title: '作品 24', category: 'video', image: './image/科宝渲染1后视.png', desc: '作品描述' },
                     { id: 25, title: '作品 25', category: '3d', image: './image/02.jpg', desc: '作品描述' },
@@ -275,7 +306,120 @@
                         this.currentPage++;
                     }
                 },
-                openModal(item) { this.currentItem = item; this.modalOpen = true; },
+                openModal(item) { 
+                    this.currentItem = item; 
+                    this.modalOpen = true; 
+                    // 重置缩放和拖动状态
+                    this.zoomLevel = 1.0;
+                    this.translateX = 0;
+                    this.translateY = 0;
+                },
+                
+                // 鼠标拖动方法
+                startDrag(event) {
+                    this.isDragging = true;
+                    this.startX = event.clientX - this.translateX;
+                    this.startY = event.clientY - this.translateY;
+                },
+                
+                drag(event) {
+                    if (this.isDragging) {
+                        this.translateX = event.clientX - this.startX;
+                        this.translateY = event.clientY - this.startY;
+                    }
+                },
+                
+                endDrag() {
+                    this.isDragging = false;
+                },
+                
+                // 鼠标滚轮缩放
+                handleZoom(event) {
+                    event.preventDefault();
+                    
+                    const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
+                    const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomLevel * zoomFactor));
+                    
+                    // 计算鼠标位置相对于图片中心的偏移
+                    const rect = event.currentTarget.getBoundingClientRect();
+                    const mouseX = event.clientX - rect.left;
+                    const mouseY = event.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    // 根据鼠标位置调整拖动偏移，实现鼠标位置为缩放中心
+                    const offsetX = (mouseX - centerX) * (newZoom - this.zoomLevel) / this.zoomLevel;
+                    const offsetY = (mouseY - centerY) * (newZoom - this.zoomLevel) / this.zoomLevel;
+                    
+                    this.translateX += offsetX;
+                    this.translateY += offsetY;
+                    this.zoomLevel = parseFloat(newZoom.toFixed(2));
+                },
+                
+                // 触摸事件处理
+                getTouchDistance(touches) {
+                    const touch1 = touches[0];
+                    const touch2 = touches[1];
+                    const dx = touch2.clientX - touch1.clientX;
+                    const dy = touch2.clientY - touch1.clientY;
+                    return Math.sqrt(dx * dx + dy * dy);
+                },
+                
+                getTouchCenter(touches) {
+                    const touch1 = touches[0];
+                    const touch2 = touches[1];
+                    return {
+                        x: (touch1.clientX + touch2.clientX) / 2,
+                        y: (touch1.clientY + touch2.clientY) / 2
+                    };
+                },
+                
+                handleTouchStart(event) {
+                    if (event.touches.length === 2) {
+                        // 双指触摸：缩放
+                        this.touchStartDistance = this.getTouchDistance(event.touches);
+                        this.touchStartZoom = this.zoomLevel;
+                        this.touchStartTranslateX = this.translateX;
+                        this.touchStartTranslateY = this.translateY;
+                    } else if (event.touches.length === 1) {
+                        // 单指触摸：拖动
+                        this.isDragging = true;
+                        this.startX = event.touches[0].clientX - this.translateX;
+                        this.startY = event.touches[0].clientY - this.translateY;
+                    }
+                },
+                
+                handleTouchMove(event) {
+                    if (event.touches.length === 2) {
+                        // 双指触摸：缩放和拖动
+                        const currentDistance = this.getTouchDistance(event.touches);
+                        const scaleFactor = currentDistance / this.touchStartDistance;
+                        
+                        // 计算新的缩放级别
+                        const newZoom = Math.max(this.minZoom, Math.min(this.maxZoom, this.touchStartZoom * scaleFactor));
+                        
+                        // 计算触摸中心
+                        const currentCenter = this.getTouchCenter(event.touches);
+                        const startCenter = this.getTouchCenter(event.touches);
+                        
+                        // 计算缩放时的拖动偏移
+                        const zoomRatio = newZoom / this.touchStartZoom;
+                        this.translateX = this.touchStartTranslateX * zoomRatio + currentCenter.x - startCenter.x;
+                        this.translateY = this.touchStartTranslateY * zoomRatio + currentCenter.y - startCenter.y;
+                        this.zoomLevel = parseFloat(newZoom.toFixed(2));
+                    } else if (event.touches.length === 1 && this.isDragging) {
+                        // 单指触摸：拖动
+                        this.translateX = event.touches[0].clientX - this.startX;
+                        this.translateY = event.touches[0].clientY - this.startY;
+                    }
+                },
+                
+                handleTouchEnd(event) {
+                    this.isDragging = false;
+                    // 重置触摸起始值
+                    this.touchStartDistance = 0;
+                    this.touchStartZoom = 0;
+                },
                 
                 prevWork() {
                     const currentIndex = this.items.findIndex(i => i.id === this.currentItem.id);
