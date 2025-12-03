@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GaXin | 首页</title>
+    <!-- 预连接关键域名 -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- 关键资源加载 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
     <!-- 共享样式 -->
     <style>
@@ -54,7 +63,7 @@
     <header class="relative h-screen flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0">
             <!-- 替换为你的 Showreel 封面或视频 -->
-            <img src="./image/red2.png" class="w-full h-full object-cover opacity-30">
+            <img src="./image/red2.png" class="w-full h-full object-cover opacity-30" loading="lazy">
             <div class="absolute inset-0 bg-gradient-to-b from-transparent via-art-dark/60 to-art-dark"></div>
         </div>
         <div class="relative z-10 text-center px-4">
@@ -127,7 +136,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- 作品 1: 兰博基尼飓风AI广告 -->
                 <div class="group relative aspect-video rounded-xl overflow-hidden glass-panel cursor-pointer" onclick="window.location.href='portfolio.html?open=1'">
-                    <img src="./image/car.jpg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <img src="./image/car.jpg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" loading="lazy">
                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                         <span class="px-6 py-2 border border-white text-white rounded-full">查看详情</span>
                     </div>
@@ -139,7 +148,7 @@
 
                 <!-- 作品 2: 静态展示 -->
                 <div class="group relative aspect-video rounded-xl overflow-hidden glass-panel cursor-pointer" onclick="window.location.href='portfolio.html?open=2'">
-                    <img src="./image/03.jpg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <img src="./image/03.jpg" class="w-full h-full object-cover transition duration-700 group-hover:scale-110" loading="lazy">
                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                         <span class="px-6 py-2 border border-white text-white rounded-full">查看详情</span>
                     </div>
@@ -169,7 +178,7 @@
             <div @click="togglePlay()" class="relative w-10 h-10 cursor-pointer">
                 <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&q=80" 
                      class="w-full h-full rounded-full object-cover border border-white/20 spin-slow" 
-                     :class="isPlaying ? '' : 'paused'">
+                     :class="isPlaying ? '' : 'paused'" loading="lazy">
                 <div class="absolute inset-0 flex items-center justify-center">
                     <i class="fas text-[10px] text-white" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
                 </div>
@@ -211,67 +220,65 @@
                 
                 initPlayer() {
                     const audio = this.$refs.audio;
-                    // 1. 设置初始曲目
-                    audio.src = this.currentTrack.src;
                     
-                    // 2. 恢复音量
                     const savedVol = localStorage.getItem('site_volume');
                     if(savedVol) this.volume = parseFloat(savedVol);
                     audio.volume = this.volume;
-
-                    // 3. 尝试恢复播放进度
-                    const savedTime = localStorage.getItem('audio_time');
+                    
+                    const savedTrackIndex = localStorage.getItem('currentTrackIndex');
+                    if(savedTrackIndex) this.currentTrackIndex = parseInt(savedTrackIndex);
+                    
+                    // 只在用户点击播放时加载音频，而不是初始化时
                     const wasPlaying = localStorage.getItem('audio_playing') === 'true';
+                    if(wasPlaying) {
+                        this.loadTrack();
+                        this.togglePlay();
+                    }
                     
-                    if(savedTime) audio.currentTime = parseFloat(savedTime);
-                    
-                    // 4. 自动保存进度循环
                     setInterval(() => {
-                        localStorage.setItem('audio_time', audio.currentTime);
+                        if(this.isPlaying) {
+                            localStorage.setItem('audio_time', audio.currentTime);
+                        }
                         localStorage.setItem('audio_playing', this.isPlaying);
                         localStorage.setItem('currentTrackIndex', this.currentTrackIndex);
                     }, 1000);
-
-                    // 注意：浏览器通常禁止自动播放，除非用户有过交互。
-                    // 这里我们尝试如果之前是播放状态，则尝试自动播放
-                    if(wasPlaying) {
-                        const playPromise = audio.play();
-                        if (playPromise !== undefined) {
-                            playPromise.then(_ => { this.isPlaying = true; })
-                            .catch(error => { console.log("需用户交互才能播放"); this.isPlaying = false; });
-                        }
-                    }
                 },
-                
                 togglePlay() {
                     const audio = this.$refs.audio;
-                    if(this.isPlaying) audio.pause();
-                    else audio.play();
+                    
+                    // 如果音频未加载，则先加载
+                    if(!audio.src || audio.src.split('/').pop() !== this.currentTrack.src.split('/').pop()) {
+                        this.loadTrack();
+                    }
+                    
+                    if(this.isPlaying) {
+                        audio.pause();
+                    } else {
+                        audio.play();
+                    }
                     this.isPlaying = !this.isPlaying;
                     localStorage.setItem('audio_playing', this.isPlaying);
                 },
-                
                 updateVolume() {
                     this.$refs.audio.volume = this.volume;
                     localStorage.setItem('site_volume', this.volume);
                 },
-                
                 prevTrack() {
                     this.currentTrackIndex = (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
-                    this.loadTrack();
+                    this.isPlaying = false;
+                    localStorage.setItem('audio_playing', this.isPlaying);
                 },
-                
                 nextTrack() {
                     this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
-                    this.loadTrack();
+                    this.isPlaying = false;
+                    localStorage.setItem('audio_playing', this.isPlaying);
                 },
-                
                 loadTrack() {
                     const audio = this.$refs.audio;
                     audio.src = this.currentTrack.src;
-                    audio.currentTime = 0;
-                    if(this.isPlaying) {
-                        audio.play();
+                    const savedTime = localStorage.getItem('audio_time');
+                    if(savedTime && this.isPlaying) {
+                        audio.currentTime = parseFloat(savedTime);
                     }
                 }
             }

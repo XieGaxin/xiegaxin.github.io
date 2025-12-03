@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GaXin | 获奖证书</title>
+    <!-- 预连接关键域名 -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- 关键资源加载 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
@@ -60,7 +69,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6">
             <template x-for="cert in certificates" :key="cert.id">
                 <div class="certificate-card group relative aspect-[4/3] rounded-xl overflow-hidden glass-panel p-4 cursor-pointer transition-all duration-300 hover:shadow-lg" @click="openModal(cert)">
-                    <img :src="cert.image" :alt="cert.title" class="w-full h-full object-cover rounded-lg transition duration-500 group-hover:scale-103">
+                    <img :src="cert.image" :alt="cert.title" class="w-full h-full object-cover rounded-lg transition duration-500 group-hover:scale-103" loading="lazy">
                     <div class="absolute bottom-0 left-0 right-0 p-3 bg-black/70 backdrop-blur-sm">
                         <h3 class="text-sm font-bold text-white text-center" x-text="cert.title"></h3>
                     </div>
@@ -106,7 +115,7 @@
                 <div class="flex items-center justify-center h-full overflow-hidden" @wheel.prevent="handleZoom">
                     <img :src="currentCert.image" :alt="currentCert.title" 
                          class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl transition-transform duration-300"
-                         :style="{ transform: `scale(${zoomLevel})` }">
+                         :style="{ transform: `scale(${zoomLevel})` }" loading="lazy">
                 </div>
             </div>
         </div>

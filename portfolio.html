@@ -68,7 +68,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <template x-for="item in paginatedItems" :key="item.id">
                 <div class="work-card group relative aspect-[4/3] rounded-lg overflow-hidden glass-panel cursor-pointer" @click="openModal(item)">
-                    <img :src="item.image" class="w-full h-full object-cover transition duration-500 group-hover:scale-103">
+                    <img :src="item.image" class="w-full h-full object-cover transition duration-500 group-hover:scale-103" loading="lazy">
                     <div class="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center p-4 text-center">
                         <span class="text-art-accent text-xs uppercase tracking-widest mb-2" x-text="item.category"></span>
                         <h3 class="text-xl font-bold text-white" x-text="item.title"></h3>
@@ -117,7 +117,7 @@
                             <iframe :src="currentItem.bilibili" class="w-full h-full" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
                          </template>
                          <template x-if="currentItem.type !== 'video' || !currentItem.bilibili">
-                            <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto">
+                            <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto" loading="lazy">
                          </template>
                     </div>
                     <div class="p-8">

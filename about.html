@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GaXin | 关于我</title>
+    <!-- 预连接关键域名 -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- 关键资源加载 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
@@ -49,7 +58,7 @@
             <div class="relative">
                 <!-- 图片 -->
                 <div class="aspect-[3/4] rounded-2xl overflow-hidden glass-panel p-2">
-                    <img src="./image/person.jpg" class="w-full h-full object-cover rounded-xl grayscale hover:grayscale-0 transition duration-700">
+                    <img src="./image/person.jpg" class="w-full h-full object-cover rounded-xl grayscale hover:grayscale-0 transition duration-700" loading="lazy">
                 </div>
                 <!-- 装饰性背景字 -->
                 <div class="absolute -z-10 -top-10 -left-10 text-[120px] font-serif font-bold text-white/5 leading-none">WHO<br>AM I</div>

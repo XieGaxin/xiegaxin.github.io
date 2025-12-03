@@ -1,0 +1,27 @@
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+
+# 编辑器配置文件
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 日志文件
+*.log
+
+# 缓存文件夹
+.cache/
+node_modules/
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
