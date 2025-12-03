@@ -133,7 +133,12 @@
                          <template x-if="currentItem.type === 'video' && currentItem.bilibili">
                             <iframe :src="currentItem.bilibili" class="w-full h-full" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
                          </template>
-                         <template x-if="currentItem.type !== 'video' || !currentItem.bilibili">
+                         <template x-else-if="currentItem.type === 'link'">
+                            <!-- 对于链接类型的作品，仍然显示图片 -->
+                            <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto" loading="lazy">
+                         </template>
+                         <template x-else>
+                            <!-- 其他类型（图片） -->
                             <img :src="currentItem.image" class="w-full h-full object-contain max-w-full max-h-full mx-auto my-auto" loading="lazy">
                          </template>
                     </div>
